@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CARNET CHAUFFEUR</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#EDF1EE;--paper:#fff;--ink:#17262B;--muted:#5B6C70;--line:#CBD5CF;--green:#0F5F3F;--hero:#0F5F3F;--orange:#D9620F;--d1:#F6E6CF;--d2:#F2B36B;--d3:#D9620F;--d3ink:#fff;--neg:#B3261E;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#0F1A17;--paper:#18272A;--ink:#E8EFEA;--muted:#93A39E;--line:#2D3E3A;--green:#5BC593;--hero:#1E6B4B;--orange:#F0904A;--d1:#33291C;--d2:#7A5122;--d3:#F0904A;--d3ink:#1B1206;--neg:#FF8A80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.4;font-variant-numeric:tabular-nums}
+main{max-width:480px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:22px;font-weight:800;margin:4px 0 12px;letter-spacing:-.01em}
+h2{font-size:17px;margin:20px 0 8px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;min-height:44px}
+.tabs{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:12px}
+.tabs button{flex:1;min-height:44px;border:0;background:transparent;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer;padding:0 2px}
+.tabs button[aria-selected="true"]{background:var(--paper);color:var(--ink)}
+.datebar{display:flex;align-items:center;justify-content:space-between;margin:14px 0}
+.datebar button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--paper);font-size:22px;cursor:pointer}
+.datebar span{font-weight:600;text-transform:capitalize}
+.hero{background:var(--hero);color:#fff;border-radius:18px;padding:20px;margin:0 0 14px}
+.hero.neg{background:var(--neg)}
+.hero small{display:block;opacity:.88;font-size:15px}
+.hero strong{display:block;font-size:44px;font-weight:800;line-height:1.1;letter-spacing:-.02em;margin:4px 0}
+.card{background:var(--paper);border-radius:14px;padding:4px 16px;margin-bottom:14px}
+.card.p{padding:14px 16px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:0}
+.row label{flex:1}
+.row label span{display:block;font-size:13px;color:var(--muted)}
+.row input{width:8.5em;text-align:right;font-size:22px;font-weight:600;border:0;border-bottom:2px solid var(--line);background:transparent;padding:4px 2px;border-radius:0}
+.row input:focus{border-color:var(--orange);outline:none}
+.row.fuel input{color:var(--orange)}
+.unit{font-size:14px;color:var(--muted);width:1.2em}
+.note{font-size:14px;color:var(--muted);margin:8px 0}
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.totals div{background:var(--paper);border-radius:14px;padding:12px 14px}
+.totals small{display:block;color:var(--muted);font-size:13px}
+.totals b{font-size:20px}
+ul.list{list-style:none;margin:0;padding:0}
+ul.list li{display:grid;grid-template-columns:4.6em 1fr auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+ul.list li:last-child{border-bottom:0}
+ul.q li{grid-template-columns:1fr auto}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green);border-radius:4px}
+.bar i.n{background:var(--neg)}
+li b.n{color:var(--neg)}
+.empty{color:var(--muted);padding:14px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.z{min-height:92px;border:2px solid var(--line);border-radius:14px;background:var(--paper);padding:10px 8px;text-align:left;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}
+.z b{font-size:15px;line-height:1.2}
+.z span{font-size:12.5px;line-height:1.25}
+.z.l0{border-style:dashed;color:var(--muted)}
+.z.l1{background:var(--d1);border-color:var(--d1)}
+.z.l2{background:var(--d2);border-color:var(--d2)}
+.z.l3{background:var(--d3);border-color:var(--d3);color:var(--d3ink)}
+.z[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:1px}
+.field{width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--paper);padding:0 12px;margin:6px 0 12px}
+.lv{display:grid;gap:8px}
+.btn{min-height:48px;border-radius:12px;border:2px solid var(--line);background:var(--paper);font-weight:600;text-align:left;padding:0 14px;cursor:pointer}
+.btn.main{background:var(--green);border-color:var(--green);color:#fff;text-align:center;width:100%}
+@media (prefers-color-scheme:dark){.btn.main{color:#0F1A17}}
+.lv .btn[data-l="3"]{background:var(--d3);color:var(--d3ink);border-color:var(--d3)}
+.lv .btn[data-l="2"]{background:var(--d2);border-color:var(--d2)}
+.lv .btn[data-l="1"]{background:var(--d1);border-color:var(--d1)}
+.msg{min-height:1.4em;font-size:15px;margin:10px 0 0}
+.msg.err{color:var(--neg)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><h1>CARNET CHAUFFEUR</h1><button class="link" id="out" hidden>Se déconnecter</button></div>
+
+<section id="auth">
+  <div class="card p">
+    <label for="email">E-mail</label>
+    <input id="email" class="field" type="email" autocomplete="email" inputmode="email">
+    <label for="pwd">Mot de passe (6 caractères minimum)</label>
+    <input id="pwd" class="field" type="password" autocomplete="current-password">
+    <button class="btn main" id="login">Se connecter</button>
+    <div style="height:8px"></div>
+    <button class="btn main" id="signup" style="background:var(--paper);color:var(--ink);border-color:var(--line)">Créer mon compte</button>
+    <p class="msg" id="amsg"></p>
+  </div>
+</section>
+
+<div id="app" hidden>
+<div class="tabs" role="tablist">
+  <button role="tab" data-tab="jour" aria-selected="true">Jour</button>
+  <button role="tab" data-tab="semaine" aria-selected="false">Semaine</button>
+  <button role="tab" data-tab="mois" aria-selected="false">Mois</button>
+  <button role="tab" data-tab="zones" aria-selected="false">Zones</button>
+</div>
+<div class="datebar" id="datebar">
+  <button id="prev" aria-label="Précédent">‹</button><span id="dlabel"></span><button id="next" aria-label="Suivant">›</button>
+</div>
+
+<section id="jour">
+  <div class="hero" id="hero"><small>Il te reste</small><strong id="marge">—</strong><small id="hsub"></small></div>
+  <div class="card">
+    <div class="row"><label for="recette">Recette du jour<span>Ce que tu as encaissé</span></label><input id="recette" inputmode="numeric" autocomplete="off" placeholder="0"><i class="unit">F</i></div>
+    <div class="row fuel"><label for="carburant">Carburant ou recharge</label><input id="carburant" inputmode="numeric" autocomplete="off" placeholder="0"><i class="unit">F</i></div>
+    <div class="row fuel"><label for="autres">Autres frais<span>Entretien, parking, faux frais</span></label><input id="autres" inputmode="numeric" autocomplete="off" placeholder="0"><i class="unit">F</i></div>
+    <div class="row"><label for="versement">Versement au propriétaire<span>Repris d'un jour à l'autre</span></label><input id="versement" inputmode="numeric" autocomplete="off" placeholder="0"><i class="unit">F</i></div>
+  </div>
+  <p class="note" id="status"></p>
+</section>
+<section id="semaine" hidden></section>
+<section id="mois" hidden></section>
+
+<section id="zones" hidden>
+  <div class="hero"><small>Où aller maintenant ?</small><strong id="best">—</strong><small id="bestsub"></small></div>
+  <div class="grid" id="grid"></div>
+  <p class="note">Schéma des communes d'Abidjan, pas une carte exacte. Seuls les signalements de la dernière heure comptent.</p>
+  <h2 id="qtitle">Quartiers signalés</h2>
+  <div class="card"><ul class="list q" id="qlist"></ul></div>
+  <h2>Signaler la demande là où tu es</h2>
+  <div class="card p">
+    <label for="zsel">Commune</label>
+    <select id="zsel" class="field"></select>
+    <label for="quartier">Quartier (facultatif)</label>
+    <input id="quartier" class="field" maxlength="40" autocomplete="off" placeholder="Ex. Niangon, Sicogi, Riviera 2">
+    <div class="lv" id="lv">
+      <button class="btn" data-l="3">Beaucoup de clients</button>
+      <button class="btn" data-l="2">Quelques clients</button>
+      <button class="btn" data-l="1">Peu de clients</button>
+    </div>
+    <p class="msg" id="msg"></p>
+  </div>
+</section>
+</div>
+</main>
+
+<script>
+const SUPABASE_URL='https://ymhjcfznlygijrqubsxc.supabase.co';
+const SUPABASE_KEY='sb_publishable_HB_TqWVYykgQlgMaSsexDQ_G_GTfx_C';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,'0');
+const key=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const num=v=>parseInt(String(v).replace(/\D/g,''),10)||0;
+const fmt=n=>new Intl.NumberFormat('fr-FR').format(n)+' F';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ZONES=['Yopougon','Abobo','Bingerville','Attécoubé','Adjamé','Cocody','Plateau','Treichville','Koumassi','Marcory','Port-Bouët'];
+const LV={1:'Peu de clients',2:'Demande moyenne',3:'Forte demande'};
+
+let user=null,days={},reports=[],selected=ZONES[0],tab='jour',saveT,cur=new Date();
+cur.setHours(12,0,0,0);
+
+/* ---------- connexion ---------- */
+function amsg(t,err){const m=$('#amsg');m.textContent=t;m.className='msg'+(err?' err':'')}
+async function auth(kind){
+  const email=$('#email').value.trim(),password=$('#pwd').value;
+  if(!email||password.length<6){amsg('Entre ton e-mail et un mot de passe de 6 caractères minimum.',true);return}
+  amsg('Un instant…');
+  const r=kind==='login'?await sb.auth.signInWithPassword({email,password}):await sb.auth.signUp({email,password});
+  if(r.error){amsg(r.error.message==='Invalid login credentials'?'E-mail ou mot de passe incorrect.':r.error.message,true);return}
+  if(!r.data.session){amsg('Compte créé. Vérifie ta boîte e-mail pour confirmer, puis connecte-toi.');return}
+  user=r.data.user;start();
+}
+$('#login').onclick=()=>auth('login');
+$('#signup').onclick=()=>auth('signup');
+$('#out').onclick=async()=>{await sb.auth.signOut();location.reload()};
+
+/* ---------- carnet ---------- */
+const counted=d=>d&&((d.recette||0)>0||(d.carburant||0)>0||(d.autres||0)>0);
+function defVers(){const k=Object.keys(days).filter(x=>days[x].versement>0).sort().pop();return k?days[k].versement:0}
+const calc=d=>{const v=d.versement!=null?d.versement:defVers();return{r:d.recette||0,c:(d.carburant||0)+(d.autres||0),v,m:(d.recette||0)-(d.carburant||0)-(d.autres||0)-v}};
+function showHero(){
+  const d=days[key(cur)],h=$('#hero');
+  if(!counted(d)){h.classList.remove('neg');$('#marge').textContent='—';$('#hsub').textContent='Entre ta recette pour voir ce qui te reste.';return}
+  const c=calc(d);h.classList.toggle('neg',c.m<0);$('#marge').textContent=fmt(c.m);$('#hsub').textContent='Après carburant, frais et versement.';
+}
+function fillDay(){
+  const d=days[key(cur)]||{};
+  $('#recette').value=d.recette||'';$('#carburant').value=d.carburant||'';$('#autres').value=d.autres||'';
+  $('#versement').value=(d.versement!=null?d.versement:defVers())||'';showHero();
+}
+function status(t,err){const s=$('#status');s.textContent=t;s.style.color=err?'var(--neg)':''}
+['recette','carburant','autres','versement'].forEach(id=>$('#'+id).addEventListener('input',()=>{
+  const k=key(cur);
+  days[k]={recette:num($('#recette').value),carburant:num($('#carburant').value),autres:num($('#autres').value),versement:num($('#versement').value)};
+  showHero();status('Enregistrement…');
+  clearTimeout(saveT);saveT=setTimeout(()=>saveDay(k),700);
+}));
+async function saveDay(k){
+  const d=days[k];
+  const {error}=await sb.from('carnet_days').upsert({user_id:user.id,day:k,...d,updated_at:new Date().toISOString()},{onConflict:'user_id,day'});
+  status(error?'Échec de l\'enregistrement. Vérifie ta connexion.':'Enregistré',!!error);
+}
+async function loadDays(){
+  const {data,error}=await sb.from('carnet_days').select('day,recette,carburant,autres,versement').limit(1000);
+  if(error){status('Impossible de charger ton carnet.',true);return}
+  days={};data.forEach(r=>days[r.day]={recette:r.recette,carburant:r.carburant,autres:r.autres,versement:r.versement});
+}
+const keysWeek=()=>{const s=new Date(cur);s.setDate(cur.getDate()-(cur.getDay()+6)%7);return[...Array(7)].map((_,i)=>{const x=new Date(s);x.setDate(s.getDate()+i);return x})};
+const keysMonth=()=>[...Array(new Date(cur.getFullYear(),cur.getMonth()+1,0).getDate())].map((_,i)=>new Date(cur.getFullYear(),cur.getMonth(),i+1,12));
+function summary(dates){
+  let R=0,C=0,V=0,M=0,max=1;const rows=[];
+  dates.forEach(dt=>{const d=days[key(dt)];if(!counted(d))return;const c=calc(d);R+=c.r;C+=c.c;V+=c.v;M+=c.m;max=Math.max(max,Math.abs(c.m));rows.push({dt,m:c.m})});
+  const s=rows.length>1?'s':'';
+  const list=rows.length?'<div class="card"><ul class="list">'+rows.map(r=>`<li><span>${r.dt.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'})}</span><span class="bar"><i class="${r.m<0?'n':''}" style="width:${Math.max(4,Math.abs(r.m)/max*100)}%"></i></span><b class="${r.m<0?'n':''}">${fmt(r.m)}</b></li>`).join('')+'</ul></div>':'<p class="empty">Aucun jour enregistré sur cette période.</p>';
+  return`<div class="hero${M<0?' neg':''}"><small>Il te reste</small><strong>${fmt(M)}</strong><small>${rows.length} jour${s} travaillé${s}</small></div><div class="totals"><div><small>Recettes</small><b>${fmt(R)}</b></div><div><small>Carburant et frais</small><b>${fmt(C)}</b></div><div><small>Versements</small><b>${fmt(V)}</b></div><div><small>Moyenne par jour</small><b>${fmt(rows.length?Math.round(M/rows.length):0)}</b></div></div>`+list;
+}
+
+/* ---------- zones ---------- */
+const ago=t=>{const m=Math.max(0,Math.round((Date.now()-t)/60000));return m<1?"à l'instant":'il y a '+m+' min'};
+async function loadReports(){
+  const since=new Date(Date.now()-3600000).toISOString();
+  const {data,error}=await sb.from('zone_reports').select('commune,quartier,level,created_at').gte('created_at',since);
+  if(error)return;
+  reports=data.map(r=>({zone:r.commune,quartier:r.quartier||'',level:r.level,t:Date.parse(r.created_at)})).filter(x=>ZONES.includes(x.zone)&&x.level>=1&&x.level<=3);
+  if(tab==='zones')renderZones();
+}
+function renderZones(){
+  const all=reports.filter(x=>Date.now()-x.t<3600000);
+  const st=ZONES.map(z=>{const r=all.filter(x=>x.zone===z),avg=r.length?r.reduce((s,x)=>s+x.level,0)/r.length:0;return{z,n:r.length,avg,lvl:r.length?Math.round(avg):0,last:r.length?Math.max(...r.map(x=>x.t)):0}});
+  $('#grid').innerHTML=st.map(s=>`<button class="z l${s.lvl}" data-z="${s.z}" aria-pressed="${s.z===selected}"><b>${s.z}</b><span>${s.n?LV[s.lvl]+'<br>'+s.n+' signalement'+(s.n>1?'s':'')+', '+ago(s.last):'Aucun signalement'}</span></button>`).join('');
+  const best=st.filter(s=>s.n).sort((a,b)=>b.avg-a.avg||b.n-a.n)[0];
+  $('#best').textContent=best?best.z:'Aucune zone connue';
+  $('#bestsub').textContent=best?LV[best.lvl]+', '+best.n+' signalement'+(best.n>1?'s':'')+' dans la dernière heure.':'Aucun signalement depuis 1 h. Signale la demande autour de toi.';
+  $('#qtitle').textContent='Quartiers signalés à '+selected;
+  const q=all.filter(x=>x.zone===selected&&x.quartier).sort((a,b)=>b.t-a.t).slice(0,8);
+  $('#qlist').innerHTML=q.length?q.map(x=>`<li><span><b>${esc(x.quartier)}</b><br><small>${LV[x.level]}</small></span><small>${ago(x.t)}</small></li>`).join(''):'<li class="empty">Aucun quartier précisé pour cette commune.</li>';
+  $('#zsel').value=selected;
+}
+$('#zsel').innerHTML=ZONES.map(z=>`<option>${z}</option>`).join('');
+$('#zsel').onchange=e=>{selected=e.target.value;renderZones()};
+$('#grid').onclick=e=>{const b=e.target.closest('.z');if(b){selected=b.dataset.z;renderZones()}};
+const say=(t,err)=>{const m=$('#msg');m.textContent=t;m.className='msg'+(err?' err':'')};
+document.querySelectorAll('#lv .btn').forEach(b=>b.onclick=async()=>{
+  const level=+b.dataset.l,quartier=$('#quartier').value.trim().slice(0,40);
+  const {error}=await sb.from('zone_reports').upsert({user_id:user.id,commune:selected,quartier,level,created_at:new Date().toISOString()},{onConflict:'user_id'});
+  if(error){say('Échec de l\'envoi. Vérifie ta connexion.',true);return}
+  say(selected+(quartier?', '+quartier:'')+' : '+LV[level]+'. Merci, c\'est partagé.');
+  loadReports();
+});
+
+/* ---------- navigation ---------- */
+function render(){
+  const z=tab==='zones';
+  ['jour','semaine','mois','zones'].forEach(t=>$('#'+t).hidden=t!==tab);
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
+  $('#datebar').hidden=z;
+  if(!z)$('#dlabel').textContent=tab==='mois'?cur.toLocaleDateString('fr-FR',{month:'long',year:'numeric'}):tab==='semaine'?'Semaine du '+keysWeek()[0].toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):cur.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  if(tab==='jour')fillDay();
+  if(tab==='semaine')$('#semaine').innerHTML=summary(keysWeek());
+  if(tab==='mois')$('#mois').innerHTML=summary(keysMonth());
+  if(z){renderZones();loadReports()}
+}
+function step(dir){
+  if(tab==='jour')cur.setDate(cur.getDate()+dir);else if(tab==='semaine')cur.setDate(cur.getDate()+7*dir);else{cur.setDate(1);cur.setMonth(cur.getMonth()+dir)}
+  render();
+}
+$('#prev').onclick=()=>step(-1);$('#next').onclick=()=>step(1);
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
+
+async function start(){
+  $('#auth').hidden=true;$('#app').hidden=false;$('#out').hidden=false;
+  await loadDays();render();
+  setInterval(()=>{if(tab==='zones')loadReports()},30000);
+}
+(async()=>{
+  const {data}=await sb.auth.getSession();
+  if(data.session){user=data.session.user;start()}
+})();
+</script>
+</body>
+</html>
